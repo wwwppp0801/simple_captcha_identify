@@ -5,7 +5,7 @@ from PIL import Image
 import pytesseract
 
 # 容错最大的有色判断
-MAX_RGB_VALUE = 20
+MAX_RGB_VALUE = 100
 # 噪点大小
 MAX_NOISY_COUNT = 25
 
@@ -133,17 +133,24 @@ def _inner_recursion(new_x, new_y, width, height, tmp_list, flag_list, points):
 
 
 if __name__ == '__main__':
-    img = Image.open('imgs/captcha-7.jpg')
-    img = img.convert('RGBA')
-    w, h = img.size[0], img.size[1]
-    print w, h
-    point_list = gen_white_black_points(img)
-    print_char_pic(w, h, point_list)
-    reduce_noisy(w, h, point_list)
-    print_char_pic(w, h, point_list)
-
-
-    img.putdata(point_list)
-    img.save("imgs/rebuild.jpg")
-
-    print pytesseract.image_to_string(Image.open('imgs/rebuild.jpg'))
+    right=0
+    wrong=0
+    for filename in ('5177.jpg','6413.jpg','5970.jpg'):
+        prefix=filename.replace(".jpg","").replace(".gif","")
+        img = Image.open('imgs/'+filename)
+        img = img.convert('RGBA')
+        w, h = img.size[0], img.size[1]
+        #print w, h
+        point_list = gen_white_black_points(img)
+        #print_char_pic(w, h, point_list)
+        reduce_noisy(w, h, point_list)
+        #print_char_pic(w, h, point_list)
+        img.putdata(point_list)
+        img.save("imgs/"+prefix+"_rebuild.jpg")
+        result=pytesseract.image_to_string(Image.open("imgs/"+prefix+"_rebuild.jpg"),lang="eng",config="-psm 7 digits")
+        if result==prefix:
+            right+=1
+        else:
+            wrong+=1
+        print result
+    print  "right:",right,"  wrong:", wrong
