@@ -4,6 +4,9 @@ __author__ = 'tech.chao'
 from PIL import Image
 import pytesseract
 
+from PIL import ImageFile
+ImageFile.LOAD_TRUNCATED_IMAGES = True
+
 # 容错最大的有色判断
 MAX_RGB_VALUE = 100
 # 噪点大小
@@ -135,7 +138,7 @@ def _inner_recursion(new_x, new_y, width, height, tmp_list, flag_list, points):
 if __name__ == '__main__':
     right=0
     wrong=0
-    for filename in ('5177.jpg','6413.jpg','5970.jpg'):
+    for filename in ('5177.gif','6413.jpg','5970.jpg'):
         prefix=filename.replace(".jpg","").replace(".gif","")
         img = Image.open('imgs/'+filename)
         img = img.convert('RGBA')
